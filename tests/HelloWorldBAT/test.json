@@ -1,0 +1,5 @@
+{
+  "name":"Hello World BAT",
+  "description":"Simple test that sends a Hello World BAT",
+  "attachments":["helloworld.bat"]
+}

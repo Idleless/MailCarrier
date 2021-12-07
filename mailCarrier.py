@@ -76,7 +76,7 @@ def runSingleTest(config, test, emailTemplate):
     whatIf = config['whatIf'] != 'False'
 
     if (password is None or password == "") and not whatIf:
-        passsword = getpass.getpass("Password for {}: ".format(sender))
+        password = getpass.getpass("Password for {}: ".format(sender))
 
     sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf)
 
@@ -143,7 +143,7 @@ def sendEmail(subject, body, sender, password, receiver, attachments, path, what
     else:
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(sender.encode(), password.encode())
+            server.login(sender, password)
             server.sendmail(sender, receiver, text)
 
 if __name__ == "__main__":

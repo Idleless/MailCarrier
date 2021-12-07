@@ -23,3 +23,7 @@ format of test.json:
 - name = name of the test (sent in subject)
 - description = description of the test (sent in body)
 - attachments = a list of files to attach to the email
+
+# Google 2FA workaround
+If you're using a google account with 2FA, you will need to create an AppPassword. This is a randomly generated password that allows logging in without 2FA. I wouuld not recommend keeping this password for a long period of time and would recommend deleting the password from your account as soon as it is no longer needed.
+https://myaccount.google.com/u/1/apppasswords

@@ -31,6 +31,7 @@ def initConfig():
 
     parser.add_argument('--sleep', help='Delay between emails')
     parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"')
+    parser.add_argument('--whatIf', help='Only output the messages to stdout (does not send the emails)')
     parser.add_argument('--testDir', help='Location of test cases')
     parser.add_argument('--emailTemplate', help='Location of emailTemplate')
 
@@ -76,13 +77,6 @@ def runTests(config):
 
         print("Running testcase '{}'".format(testConfig['name']))
 
-        subject = emailTemplate['subject'].format(title=testConfig['name'])
-        body = emailTemplate['body'].format(description=testConfig['description'])
-        sender = config['redEmail']
-        password = config['redPassword']
-        receiver = config['blueEmail']
-        attachments = testConfig['attachments']
-        path = os.path.join(config['testDir'], test)
 
         #Ugly hack to only sleep between sending emails
         if first:
@@ -90,11 +84,19 @@ def runTests(config):
         else:
             sleep(config['sleep'])
 
-        sendEmail(subject, body, sender, password, receiver, attachments, path)
+        subject = emailTemplate['subject'].format(title=testConfig['name'])
+        body = emailTemplate['body'].format(description=testConfig['description'])
+        sender = config['redEmail']
+        password = config['redPassword']
+        receiver = config['blueEmail']
+        attachments = testConfig['attachments']
+        path = os.path.join(config['testDir'], test)
+        whatIf = config['whatIf']
+        sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf)
 
 
 # from: https://realpython.com/python-send-email/
-def sendEmail(subject, body, sender, password, receiver, attachments, path):
+def sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf):
     message = MIMEMultipart()
     message["From"] = sender
     message["To"] = receiver
@@ -120,10 +122,11 @@ def sendEmail(subject, body, sender, password, receiver, attachments, path):
     text = message.as_string()
 
     print(text)
-    #context = ssl.create_default_context()
-    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-    #    server.login(sender_email, password)
-    #    server.sendmail(sender_email, receiver_email, text)
+    if not whatIf:
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, text)
 
 if __name__ == "__main__":
     main()

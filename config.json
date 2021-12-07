@@ -1,8 +1,8 @@
 {
-  "redEmail":"test@test.com",
-  "redPassword":"",
+  "senderEmail":"test@test.com",
+  "senderPassword":"",
 
-  "blueEmail":"test2@test.com",
+  "receiverEmail":"test2@test.com",
 
   "sleep": 5,
   "jitter": 0,

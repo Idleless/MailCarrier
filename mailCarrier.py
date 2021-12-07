@@ -18,16 +18,16 @@ def main():
 
 def initConfig():
 
-    required = ["redEmail", "redPassword", "blueEmail"]
+    required = ["senderEmail", "senderPassword", "receiverEmail"]
 
     with open("./config.json") as f:
         config = json.load(f)
 
     parser = argparse.ArgumentParser(description='Email sending framework to verify perimeter security appliances')
 
-    parser.add_argument('--redEmail', help='Source email address')
-    parser.add_argument('--redPassword', help='Password for Source email address')
-    parser.add_argument('--blueEmail', help='Destination email address')
+    parser.add_argument('--senderEmail', help='Source email address')
+    parser.add_argument('--senderPassword', help='Password for Source email address')
+    parser.add_argument('--receiverEmail', help='Destination email address')
 
     parser.add_argument('--sleep', help='Delay between emails')
     parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"')
@@ -68,14 +68,14 @@ def runSingleTest(config, test, emailTemplate):
 
     subject = emailTemplate['subject'].format(title=testConfig['name'])
     body = emailTemplate['body'].format(description=testConfig['description'])
-    sender = config['redEmail']
-    password = config['redPassword']
-    receiver = config['blueEmail']
+    sender = config['senderEmail']
+    password = config['senderPassword']
+    receiver = config['receiverEmail']
     attachments = testConfig['attachments']
     path = os.path.join(config['testDir'], test)
     whatIf = config['whatIf'] != 'False'
 
-    if (password is None or password is "") and not whatIf:
+    if (password is None or password == "") and not whatIf:
         passsword = getpass.getpass("Password for {}: ".format(sender))
 
     sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf)

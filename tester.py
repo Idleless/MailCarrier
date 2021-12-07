@@ -58,6 +58,8 @@ def runTests(config):
     with open(config['emailTemplate']) as f:
         emailTemplate = json.load(f)
 
+    first = false
+
     for test in tests:
         if test.startswith('_'):
             continue
@@ -79,7 +81,16 @@ def runTests(config):
         attachments = testConfig['attachments']
         path = os.path.join(config['testDir'], test)
 
+        #Ugly hack to only sleep between sending emails
+        if first:
+            first = false
+        else:
+            sleep(config['sleep'])
+
         sendEmail(subject, body, sender, password, receiver, attachments, path)
+
+
+
 
 # from: https://realpython.com/python-send-email/
 def sendEmail(subject, body, sender, password, receiver, attachments, path):

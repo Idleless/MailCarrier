@@ -5,9 +5,7 @@ Example: ./mailCarrier.py --senderEmail 'sender@gmail.com' --receiverEmail 'rerc
 
 Test cases are placed in a subfolder in the tests folder and must contain a test.json file.
 
-format of test.json:
-  name = name of the test (sent in subject)
-  description =  description of the test (sent in body)
-  attachments = a list of files to attach to the email
-
-  
+format of test.json:<br />
+  name = name of the test (sent in subject)<br />
+  description =  description of the test (sent in body)<br />
+  attachments = a list of files to attach to the email<br />

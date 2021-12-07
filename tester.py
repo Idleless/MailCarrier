@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-import smtplib, ssl, json, argparse, os, time
+import smtplib, ssl, json, argparse, os
+
+from time import sleep
 
 from email import encoders
 from email.mime.base import MIMEBase
@@ -58,7 +60,7 @@ def runTests(config):
     with open(config['emailTemplate']) as f:
         emailTemplate = json.load(f)
 
-    first = false
+    first = True
 
     for test in tests:
         if test.startswith('_'):
@@ -83,7 +85,7 @@ def runTests(config):
 
         #Ugly hack to only sleep between sending emails
         if first:
-            first = false
+            first = False
         else:
             sleep(config['sleep'])
 

@@ -92,8 +92,6 @@ def runTests(config):
         sendEmail(subject, body, sender, password, receiver, attachments, path)
 
 
-
-
 # from: https://realpython.com/python-send-email/
 def sendEmail(subject, body, sender, password, receiver, attachments, path):
     message = MIMEMultipart()

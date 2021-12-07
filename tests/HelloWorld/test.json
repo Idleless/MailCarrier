@@ -1,0 +1,5 @@
+{
+  "name":"Hello World",
+  "description":"Simple test that sends a Hello World ELF",
+  "attachments":["helloworld.elf"]
+}

@@ -1,0 +1,12 @@
+{
+  "redEmail":"test@test.com",
+  "redPassword":"Password",
+
+  "blueEmail":"test2@test.com",
+
+  "sleep": 5,
+  "jitter": 0,
+
+  "testDir": "./tests",
+  "emailTemplate": "./emailTemplate.json"
+}

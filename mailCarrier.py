@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import smtplib, ssl, json, argparse, os
+import smtplib, ssl, json, argparse, os, getpass
 
 from time import sleep
 
@@ -35,7 +35,7 @@ def initConfig():
     parser.add_argument('--testDir', help='Location of test cases')
     parser.add_argument('--emailTemplate', help='Location of emailTemplate')
 
-    #parser.add_argument('--runTest', help='Only run the specified tests')
+    parser.add_argument('--runTest', nargs='+', help='Only run the specified tests')
 
     args = parser.parse_args()
 
@@ -55,8 +55,38 @@ def initConfig():
 def initTests(config):
     pass
 
+def runSingleTest(config, test, emailTemplate):
+    try:
+        with open(os.path.join(config['testDir'], test, "test.json")) as testJson:
+            testConfig = json.load(testJson)
+    except json.decoder.JSONDecodeError as e:
+        print("Unable to run testcase '{}': {}".format(test, e))
+        return
+
+
+    print("Running testcase '{}'".format(testConfig['name']))
+
+    subject = emailTemplate['subject'].format(title=testConfig['name'])
+    body = emailTemplate['body'].format(description=testConfig['description'])
+    sender = config['redEmail']
+    password = config['redPassword']
+    receiver = config['blueEmail']
+    attachments = testConfig['attachments']
+    path = os.path.join(config['testDir'], test)
+    whatIf = config['whatIf'] != 'False'
+
+    if (password is None or password is "") and not whatIf:
+        passsword = getpass.getpass("Password for {}: ".format(sender))
+
+    sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf)
+
+
 def runTests(config):
-    tests = os.listdir(config['testDir'])
+
+    if 'runTest' in config:
+        tests = config['runTest']
+    else:
+        tests = os.listdir(config['testDir'])
 
     with open(config['emailTemplate']) as f:
         emailTemplate = json.load(f)
@@ -67,32 +97,18 @@ def runTests(config):
         #ignore the template folder
         if test.startswith('_'):
             continue
-
-        try:
-            with open(os.path.join(config['testDir'], test, "test.json")) as testJson:
-                testConfig = json.load(testJson)
-        except json.decoder.JSONDecodeError as e:
-            print("Unable to run testcase '{}': {}".format(test, e))
-            continue
-
-        print("Running testcase '{}'".format(testConfig['name']))
-
-
-        #Ugly hack to only sleep between sending emails
-        if first:
-            first = False
         else:
-            sleep(config['sleep'])
+            #Ugly hack to only sleep between sending emails
+            if first:
+                first = False
+            else:
+                t = config['sleep']
+                print("Sleeping for", t)
+                sleep(t)
 
-        subject = emailTemplate['subject'].format(title=testConfig['name'])
-        body = emailTemplate['body'].format(description=testConfig['description'])
-        sender = config['redEmail']
-        password = config['redPassword']
-        receiver = config['blueEmail']
-        attachments = testConfig['attachments']
-        path = os.path.join(config['testDir'], test)
-        whatIf = config['whatIf']
-        sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf)
+            runSingleTest(config, test, emailTemplate)
+
+
 
 
 # from: https://realpython.com/python-send-email/
@@ -122,11 +138,13 @@ def sendEmail(subject, body, sender, password, receiver, attachments, path, what
     text = message.as_string()
 
     print(text)
-    if not whatIf:
+    if whatIf:
+        print("Warning: Not sending due to WhatIf being true")
+    else:
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, text)
+            server.login(sender, password)
+            server.sendmail(sender, receiver, text)
 
 if __name__ == "__main__":
     main()

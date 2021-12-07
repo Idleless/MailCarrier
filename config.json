@@ -4,6 +4,8 @@
 
   "receiverEmail":"test2@test.com",
 
+  "smtpServer": "smtp.gmail.com",
+
   "sleep": 5,
   "jitter": 0,
 

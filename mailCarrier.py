@@ -28,6 +28,7 @@ def initConfig():
     parser.add_argument('--senderEmail', help='Source email address')
     parser.add_argument('--senderPassword', help='Password for Source email address')
     parser.add_argument('--receiverEmail', help='Destination email address')
+    parser.add_argument('--smtpServer', help='Server to send the email to')
 
     parser.add_argument('--sleep', help='Delay between emails')
     #parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"') #TODO
@@ -71,6 +72,7 @@ def runSingleTest(config, test, emailTemplate):
     sender = config['senderEmail']
     password = config['senderPassword']
     receiver = config['receiverEmail']
+    server = config['smtpServer']
     attachments = testConfig['attachments']
     path = os.path.join(config['testDir'], test)
     whatIf = config['whatIf'] != 'False'
@@ -78,7 +80,7 @@ def runSingleTest(config, test, emailTemplate):
     if (password is None or password == "") and not whatIf:
         password = getpass.getpass("Password for {}: ".format(sender))
 
-    sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf)
+    sendEmail(subject, body, sender, password, receiver, server, attachments, path, whatIf)
 
 
 def runTests(config):
@@ -112,7 +114,7 @@ def runTests(config):
 
 
 # from: https://realpython.com/python-send-email/
-def sendEmail(subject, body, sender, password, receiver, attachments, path, whatIf):
+def sendEmail(subject, body, sender, password, receiver, server, attachments, path, whatIf):
     message = MIMEMultipart()
     message["From"] = sender
     message["To"] = receiver
@@ -142,7 +144,7 @@ def sendEmail(subject, body, sender, password, receiver, attachments, path, what
         print("Warning: Not sending due to WhatIf being true")
     else:
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        with smtplib.SMTP_SSL(server, 465, context=context) as server:
             server.login(sender, password)
             server.sendmail(sender, receiver, text)
 

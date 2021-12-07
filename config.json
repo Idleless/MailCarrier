@@ -9,6 +9,6 @@
 
   "whatIf":true,
 
-  "testDir": "./tests",
+  "testDir": "./tests/",
   "emailTemplate": "./emailTemplate.json"
 }

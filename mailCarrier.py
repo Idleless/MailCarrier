@@ -30,7 +30,7 @@ def initConfig():
     parser.add_argument('--receiverEmail', help='Destination email address')
 
     parser.add_argument('--sleep', help='Delay between emails')
-    parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"')
+    #parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"') #TODO
     parser.add_argument('--whatIf', help='Only output the messages to stdout (does not send the emails)')
     parser.add_argument('--testDir', help='Location of test cases')
     parser.add_argument('--emailTemplate', help='Location of emailTemplate')
@@ -143,7 +143,7 @@ def sendEmail(subject, body, sender, password, receiver, attachments, path, what
     else:
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(sender, password)
+            server.login(sender.encode(), password.encode())
             server.sendmail(sender, receiver, text)
 
 if __name__ == "__main__":

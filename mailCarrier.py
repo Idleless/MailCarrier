@@ -63,6 +63,7 @@ def runTests(config):
     first = True
 
     for test in tests:
+        #ignore the template folder
         if test.startswith('_'):
             continue
 
@@ -75,7 +76,7 @@ def runTests(config):
 
         print("Running testcase '{}'".format(testConfig['name']))
 
-        subject = emailTemplate['subject']
+        subject = emailTemplate['subject'].format(title=testConfig['name'])
         body = emailTemplate['body'].format(description=testConfig['description'])
         sender = config['redEmail']
         password = config['redPassword']

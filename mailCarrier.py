@@ -15,6 +15,17 @@ def main():
     initTests(config)
     runTests(config)
 
+# DO NOT EDIT THIS
+# Configuration changes should be made in your config.json file.
+# These are fallback values if your config.json file is missing values.
+DEFAULT_CONFIG={
+    "sleep": 5,
+    "whatIf": True,
+    "testDir": "./tests/",
+    "emailTemplate": "./emailTemplate.json",
+    "config": "./config.json"
+}
+
 
 def initConfig():
 
@@ -34,7 +45,7 @@ def initConfig():
     parser.add_argument('--emailTemplate', help='Location of emailTemplate')
 
     # CLI only options
-    parser.add_argument('--config', help='Location of the config file', default="./config.json")
+    parser.add_argument('--config', help='Location of the config file', default=DEFAULT_CONFIG['config'])
     parser.add_argument('--runTest', nargs='+', help='Only run the specified tests')
 
     args = parser.parse_args()
@@ -76,8 +87,8 @@ def runSingleTest(config, test, emailTemplate):
     receiver = config['receiverEmail']
     server = config['smtpServer']
     attachments = testConfig['attachments']
-    path = os.path.join(config['testDir'], test)
-    whatIf = str(config['whatIf']).lower() != 'false'
+    path = os.path.join(config.get('testDir', DEFAULT_CONFIG['testDir']), test)
+    whatIf = str(config.get('whatIf', DEFAULT_CONFIG['whatIf'])).lower() != 'false'
 
     if (password is None or password == "") and not whatIf:
         password = getpass.getpass("Password for {}: ".format(sender))
@@ -91,13 +102,13 @@ def runTests(config):
     if 'runTest' in config:
         tests = config['runTest']
     else:
-        tests = os.listdir(config['testDir'])
+        tests = os.listdir(config.get('testDir', DEFAULT_CONFIG['testDir']))
 
-    with open(config['emailTemplate']) as f:
+    with open(config.get('emailTemplate', DEFAULT_CONFIG['emailTemplate'])) as f:
         emailTemplate = json.load(f)
 
     first = True
-    sleepTime = config.get('sleep', 5)
+    sleepTime = config.get('sleep', DEFAULT_CONFIG['sleep'])
 
     for test in tests:
         #ignore the template folder

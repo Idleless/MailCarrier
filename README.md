@@ -10,9 +10,11 @@ Options:
 - senderPassword (leave blank to enter via the command line)
 - receiverEmail
 - smtpServer
+- useSSL (On by default)
+- requiresAuth (On by default)
 - sleep
 - jitter (TODO)
-- whatIf (Creates and prints the emails without sending them)
+- whatIf (Creates and prints the emails without sending them. On by default)
 - testDir (directory that contains the test cases)
 - emailTemplate (a json file that the emails are based on)
 - runTest (Only runs the specified tests)

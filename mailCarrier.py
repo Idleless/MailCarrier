@@ -75,7 +75,7 @@ def runSingleTest(config, test, emailTemplate):
     server = config['smtpServer']
     attachments = testConfig['attachments']
     path = os.path.join(config['testDir'], test)
-    whatIf = config['whatIf'] != 'False'
+    whatIf = str(config['whatIf']).lower() != 'false'
 
     if (password is None or password == "") and not whatIf:
         password = getpass.getpass("Password for {}: ".format(sender))

@@ -6,6 +6,9 @@
 
   "smtpServer": "smtp.gmail.com",
 
+  "useSSL": true,
+  "requiresAuth": true,
+
   "sleep": 5,
   "jitter": 0,
 

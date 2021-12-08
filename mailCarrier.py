@@ -19,6 +19,8 @@ def main():
 # Configuration changes should be made in your config.json file.
 # These are fallback values if your config.json file is missing values.
 DEFAULT_CONFIG={
+    "useSSL": True,
+    "requiresAuth": True,
     "sleep": 5,
     "whatIf": True,
     "testDir": "./tests/",
@@ -38,6 +40,8 @@ def initConfig():
     parser.add_argument('--receiverEmail', help='Destination email address')
     parser.add_argument('--smtpServer', help='Server to send the email to')
 
+    parser.add_argument('--useSSL', help='If SSL is needed to connect to the SMTP server. On by default')
+    parser.add_argument('--requiresAuth', help='If requiresAuth is needed to connect to the SMTP server. On by default')
     parser.add_argument('--sleep', help='Delay between emails')
     #parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"') #TODO
     parser.add_argument('--whatIf', help='Only output the messages to stdout (does not send the emails)')
@@ -86,15 +90,17 @@ def runSingleTest(config, test, emailTemplate):
     password = config['senderPassword']
     receiver = config['receiverEmail']
     server = config['smtpServer']
+    useSSL = str(config.get('useSSL', DEFAULT_CONFIG['useSSL'])).lower() != 'false'
+    requiresAuth = str(config.get('requiresAuth', DEFAULT_CONFIG['requiresAuth'])).lower() != 'false'
     attachments = testConfig['attachments']
     path = os.path.join(config.get('testDir', DEFAULT_CONFIG['testDir']), test)
     whatIf = str(config.get('whatIf', DEFAULT_CONFIG['whatIf'])).lower() != 'false'
 
-    if (password is None or password == "") and not whatIf:
+    if (password is None or password == "") and not whatIf and requiresAuth:
         password = getpass.getpass("Password for {}: ".format(sender))
         config['senderPassword'] = password
 
-    sendEmail(subject, body, sender, password, receiver, server, attachments, path, whatIf)
+    sendEmail(subject, body, sender, password, receiver, server, useSSL, requiresAuth, attachments, path, whatIf)
 
 
 def runTests(config):
@@ -128,7 +134,7 @@ def runTests(config):
 
 
 # from: https://realpython.com/python-send-email/
-def sendEmail(subject, body, sender, password, receiver, server, attachments, path, whatIf):
+def sendEmail(subject, body, sender, password, receiver, server, useSSL, requiresAuth, attachments, path, whatIf):
     message = MIMEMultipart()
     message["From"] = sender
     message["To"] = receiver
@@ -157,10 +163,17 @@ def sendEmail(subject, body, sender, password, receiver, server, attachments, pa
     if whatIf:
         print("Warning: Not sending due to WhatIf being true")
     else:
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(server, 465, context=context) as server:
+        if useSSL:
+            context = ssl.create_default_context()
+            server = smtplib.SMTP_SSL(server, 465, context=context)
+        else:
+            server = smtplib.SMTP(server)
+
+        if requiresAuth:
             server.login(sender, password)
-            server.sendmail(sender, receiver, text)
+
+        server.sendmail(sender, receiver, text)
+        server.quit()
 
 if __name__ == "__main__":
     main()

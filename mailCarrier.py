@@ -106,7 +106,7 @@ def runTests(config):
             else:
                 t = config['sleep']
                 print("Sleeping for", t)
-                sleep(t)
+                sleep(float(t))
 
             runSingleTest(config, test, emailTemplate)
 

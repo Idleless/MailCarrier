@@ -81,6 +81,7 @@ def runSingleTest(config, test, emailTemplate):
 
     if (password is None or password == "") and not whatIf:
         password = getpass.getpass("Password for {}: ".format(sender))
+        config['senderPassword'] = password
 
     sendEmail(subject, body, sender, password, receiver, server, attachments, path, whatIf)
 

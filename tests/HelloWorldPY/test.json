@@ -1,0 +1,5 @@
+{
+  "name":"Hello World PY",
+  "description":"Simple test that sends a Hello World PY",
+  "attachments":["helloworld.py"]
+}

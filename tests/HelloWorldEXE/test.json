@@ -1,4 +1,5 @@
 {
+  "author": "Idleless",
   "name":"Hello World EXE",
   "description":"Simple test that sends a Hello World EXE",
   "attachments":["helloworld.exe"]

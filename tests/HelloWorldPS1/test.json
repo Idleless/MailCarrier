@@ -1,4 +1,5 @@
 {
+  "author": "Idleless",
   "name":"Hello World PS1",
   "description":"Simple test that sends a Hello World PS1",
   "attachments":["helloworld.ps1"]

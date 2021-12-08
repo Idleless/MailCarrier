@@ -1,4 +1,5 @@
 {
+  "author": "Idleless",
   "name":"No attachments",
   "description":"An email with no attachments.",
   "attachments":[]

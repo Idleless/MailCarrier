@@ -18,10 +18,7 @@ def main():
 
 def initConfig():
 
-    required = ["senderEmail", "senderPassword", "receiverEmail"]
-
-    with open("./config.json") as f:
-        config = json.load(f)
+    required = ["senderEmail", "senderPassword", "receiverEmail", "smtpServer"]
 
     parser = argparse.ArgumentParser(description='Email sending framework to verify perimeter security appliances')
 
@@ -36,9 +33,14 @@ def initConfig():
     parser.add_argument('--testDir', help='Location of test cases')
     parser.add_argument('--emailTemplate', help='Location of emailTemplate')
 
+    # CLI only options
+    parser.add_argument('--config', help='Location of the config file', default="./config.json")
     parser.add_argument('--runTest', nargs='+', help='Only run the specified tests')
 
     args = parser.parse_args()
+
+    with open(args.config) as f:
+        config = json.load(f)
 
     for key,value in vars(args).items():
         if not value is None:

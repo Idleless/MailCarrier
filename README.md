@@ -20,7 +20,8 @@ Options:
 - runTest (Only runs the specified tests)
 
 # Test Cases
-Test cases are placed in a subfolder in the ./tests/ folder and must contain a test.json file.
+Test cases are placed in a subfolder in the ./tests/ folder and must contain a test.json file.<br />
+Any folders in ./tests/ that starts with \"_\" are ignored.
 
 format of test.json:
 - name = name of the test (sent in subject)

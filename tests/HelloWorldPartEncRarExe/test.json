@@ -1,0 +1,5 @@
+{
+  "name":"Hello World Multi Part Encrypted RAR EXE",
+  "description":"Simple test that sends a Multi Part Encrypted RAR Hello World EXE, password OJE",
+  "attachments":["helloworld.part1.rar","helloworld.part2.rar"]
+}

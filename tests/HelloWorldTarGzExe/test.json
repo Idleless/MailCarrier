@@ -1,0 +1,5 @@
+{
+  "name":"Hello World TAR GZ EXE",
+  "description":"Simple test that sends a GZiped Hello World EXE",
+  "attachments":["helloworld.tar.gz"]
+}

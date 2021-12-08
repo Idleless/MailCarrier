@@ -1,0 +1,5 @@
+{
+  "name":"Hello World ZIP EXE",
+  "description":"Simple test that sends a Hello World ZIP EXE",
+  "attachments":["helloworld.zip"]
+}

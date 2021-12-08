@@ -1,0 +1,5 @@
+{
+  "name":"Hello World RAR EXE",
+  "description":"Simple test that sends a RAR compressed Hello World EXE",
+  "attachments":["helloworld.rar"]
+}

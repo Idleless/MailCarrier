@@ -1,0 +1,5 @@
+{
+  "name":"Hello World LNK",
+  "description":"Simple test that sends a Hello World Powershell script in a LNK file",
+  "attachments":["helloworld.lnk"]
+}

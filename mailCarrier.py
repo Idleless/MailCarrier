@@ -96,21 +96,21 @@ def runTests(config):
         emailTemplate = json.load(f)
 
     first = True
+    sleepTime = config.get('sleep', 5)
 
     for test in tests:
         #ignore the template folder
         if test.startswith('_'):
             continue
-        else:
-            #Ugly hack to only sleep between sending emails
-            if first:
-                first = False
-            else:
-                t = config['sleep']
-                print("Sleeping for", t)
-                sleep(float(t))
 
-            runSingleTest(config, test, emailTemplate)
+        #Ugly hack to only sleep between sending emails
+        if first:
+            first = False
+        else:
+            print("Sleeping for", sleepTime)
+            sleep(float(sleepTime))
+
+        runSingleTest(config, test, emailTemplate)
 
 
 

@@ -1,4 +1,5 @@
 {
   "subject": "This is an automated testing script: {title}",
-  "body": "This is an automated script for testing the perimeter security appliances.\n{description}\n -OJE"
+  "body": "This is an automated script for testing the perimeter security appliances.\n{description}\n -OJE\n",
+  "attachmentInfo": "{filename}:md5={md5}:sha256={sha256}"
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import smtplib, ssl, json, argparse, os, getpass
+import smtplib, ssl, json, argparse, os, getpass, hashlib
 
 from time import sleep
 
@@ -41,7 +41,7 @@ def initConfig():
     parser.add_argument('--smtpServer', help='Server to send the email to')
 
     parser.add_argument('--useSSL', help='If SSL is needed to connect to the SMTP server. On by default')
-    parser.add_argument('--requiresAuth', help='If requiresAuth is needed to connect to the SMTP server. On by default')
+    parser.add_argument('--requiresAuth', help='If authentication is needed to connect to the SMTP server. On by default')
     parser.add_argument('--sleep', help='Delay between emails')
     #parser.add_argument('--jitter', help='Adds a random delay ontop of sleep upto "jitter"') #TODO
     parser.add_argument('--whatIf', help='Only output the messages to stdout (does not send the emails)')
@@ -73,6 +73,17 @@ def initConfig():
 def initTests(config):
     pass
 
+def getAttachemntHashes(path, attachments, strTemplate):
+    out = []
+    for filename in attachments:
+        with open(os.path.join(path,filename), "rb") as attachment:
+            file = attachment.read()
+        md5 =  hashlib.md5(file).hexdigest()
+        sha256  =  hashlib.sha256(file).hexdigest()
+        out.append(strTemplate.format(filename=filename, md5=md5, sha256=sha256))
+    return out
+
+
 def runSingleTest(config, test, emailTemplate):
     try:
         with open(os.path.join(config['testDir'], test, "test.json")) as testJson:
@@ -95,6 +106,8 @@ def runSingleTest(config, test, emailTemplate):
     attachments = testConfig['attachments']
     path = os.path.join(config.get('testDir', DEFAULT_CONFIG['testDir']), test)
     whatIf = str(config.get('whatIf', DEFAULT_CONFIG['whatIf'])).lower() != 'false'
+
+    body += '\n'.join(getAttachemntHashes(path, attachments, emailTemplate['attachmentInfo']))
 
     if (password is None or password == "") and not whatIf and requiresAuth:
         password = getpass.getpass("Password for {}: ".format(sender))

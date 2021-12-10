@@ -3,6 +3,7 @@
 import smtplib, ssl, json, argparse, os, getpass, hashlib
 
 from time import sleep
+from datetime import datetime
 
 from email import encoders
 from email.mime.base import MIMEBase
@@ -19,6 +20,8 @@ def main():
 # Configuration changes should be made in your config.json file.
 # These are fallback values if your config.json file is missing values.
 DEFAULT_CONFIG={
+    "logLevel": 1,
+    "logLocation": "./log.txt",
     "useSSL": True,
     "requiresAuth": True,
     "sleep": 5,
@@ -39,6 +42,9 @@ def initConfig():
     parser.add_argument('--senderPassword', help='Password for Source email address')
     parser.add_argument('--receiverEmail', help='Destination email address')
     parser.add_argument('--smtpServer', help='Server to send the email to')
+
+    parser.add_argument('--logLevel', help='Sets the amount of logging. 0=None, 1=Header, 2=Full')
+    parser.add_argument('--logLocation', help='File to save the log to')
 
     parser.add_argument('--useSSL', help='If SSL is needed to connect to the SMTP server. On by default')
     parser.add_argument('--requiresAuth', help='If authentication is needed to connect to the SMTP server. On by default')
@@ -106,6 +112,8 @@ def runSingleTest(config, test, emailTemplate):
     attachments = testConfig['attachments']
     path = os.path.join(config.get('testDir', DEFAULT_CONFIG['testDir']), test)
     whatIf = str(config.get('whatIf', DEFAULT_CONFIG['whatIf'])).lower() != 'false'
+    logLevel = int(config.get('logLevel', DEFAULT_CONFIG['logLevel']))
+    logLocation = config.get('logLocation', DEFAULT_CONFIG['logLocation'])
 
     body += '\n'.join(getAttachemntHashes(path, attachments, emailTemplate['attachmentInfo']))
 
@@ -113,7 +121,7 @@ def runSingleTest(config, test, emailTemplate):
         password = getpass.getpass("Password for {}: ".format(sender))
         config['senderPassword'] = password
 
-    sendEmail(subject, body, sender, password, receiver, server, useSSL, requiresAuth, attachments, path, whatIf)
+    sendEmail(subject, body, sender, password, receiver, server, useSSL, requiresAuth, attachments, path, whatIf, logLevel, logLocation)
 
 
 def runTests(config):
@@ -147,7 +155,7 @@ def runTests(config):
 
 
 # from: https://realpython.com/python-send-email/
-def sendEmail(subject, body, sender, password, receiver, server, useSSL, requiresAuth, attachments, path, whatIf):
+def sendEmail(subject, body, sender, password, receiver, server, useSSL, requiresAuth, attachments, path, whatIf, logLevel, logLocation):
     message = MIMEMultipart()
     message["From"] = sender
     message["To"] = receiver
@@ -173,6 +181,22 @@ def sendEmail(subject, body, sender, password, receiver, server, useSSL, require
     text = message.as_string()
 
     print(text)
+
+    if logLevel > 0:
+        with open(logLocation, "a") as log:
+            log.write("Time: {}\n".format(datetime.now().astimezone()))
+            log.write("WhatIf: {}\n".format(whatIf))
+            if logLevel == 1:
+                log.write("From: {}\n".format(sender))
+                log.write("To: {}\n".format(receiver))
+                log.write("Subject: {}\n".format(subject))
+                log.write("Attachments: {}\n".format(attachments))
+            elif logLevel == 2:
+                log.write(text)
+            else:
+                print("Unknown log level '{}'".format(logLevel))
+            log.write("\n")
+
     if whatIf:
         print("Warning: Not sending due to WhatIf being true")
     else:

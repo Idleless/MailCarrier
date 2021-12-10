@@ -6,6 +6,9 @@
 
   "smtpServer": "smtp.gmail.com",
 
+  "logLevel": 1,
+  "logLocation": "./log.txt",
+
   "useSSL": true,
   "requiresAuth": true,
 
